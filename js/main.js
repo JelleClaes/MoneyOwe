@@ -1,29 +1,16 @@
 var dbShell;
 
-function doLog(s){
-    /*
-    setTimeout(function(){
-        console.log(s);
-    }, 3000);
-    */
-}
-
 function dbErrorHandler(err){
     alert("DB Error: "+err.message + "\nCode="+err.code);
 }
 
 function phoneReady(){
-    doLog("phoneReady");
     dbShell = window.openDatabase("Contacts", 1, "Contacts", 1000000);
-    doLog("db was opened");
     dbShell.transaction(setupTable,dbErrorHandler,getEntries);
-    doLog("ran setup");
 }
 
 function setupTable(tx){
-    doLog("before execute sql...");
     tx.executeSql("CREATE TABLE IF NOT EXISTS schulden(id INTEGER PRIMARY KEY,name,amount,status,updated)");
-    doLog("after execute sql...");
 }   
 
 function getEntries() {
@@ -33,7 +20,6 @@ function getEntries() {
 }
     
 function renderEntries(tx,results){
-    doLog("render entries");
     if (results.rows.length == 0) {
         $("#mainContent").html("<p>You currently do not have any notes.</p>");
     } else {
@@ -49,8 +35,8 @@ function renderEntries(tx,results){
 function saveNote(note, cb) {
     if(note.title == "") note.title = "[No Title]";
     dbShell.transaction(function(tx) {
-        if(note.id == "") tx.executeSql("insert into notes(name,amount,updated) values(?,?,?)",[note.title,note.body, new Date()]);
-        else tx.executeSql("update notes set name=?, amount=?,status=?, updated=? where id=?",[note.title,note.body,note.body, new Date(), note.id]);
+        if(note.id == "") tx.executeSql("insert into schulden(name,amount,updated) values(?,?,?)",[note.title,note.body, new Date()]);
+        else tx.executeSql("update schulden set name=?, amount=?,status=?, updated=? where id=?",[note.title,note.body,note.body, new Date(), note.id]);
     }, dbErrorHandler,cb);
 }
 
@@ -80,7 +66,7 @@ function init(){
             $("#editFormSubmitButton").attr("disabled","disabled"); 
             dbShell.transaction(
                 function(tx) {
-                    tx.executeSql("select id,title,body from notes where id=?",[noteId],function(tx,results) {
+                    tx.executeSql("select id,title,body from schulden where id=?",[noteId],function(tx,results) {
                         $("#noteId").val(results.rows.item(0).id);
                         $("#noteTitle").val(results.rows.item(0).title);
                         $("#noteBody").val(results.rows.item(0).body);
