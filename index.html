@@ -1,31 +1,33 @@
 <!DOCTYPE HTML>
 <html>
-    <head>
-        <title>Employee Directory</title>
-        <meta name="viewport" content="width=device-width,initial-scale=1"/>
-        <link rel="stylesheet" href="css/styles.css" />
-    </head>
+<head>
+<meta http-equiv="Content-type" content="text/html; charset=utf-8">
+<title>SimpleNote</title>
+<link href="http://code.jquery.com/mobile/1.4.2/jquery.mobile-1.4.2.min.css" rel="stylesheet" type="text/css"/>
+<script src="http://code.jquery.com/jquery-1.11.0.min.js" type="text/javascript"></script>
+<script src="http://code.jquery.com/mobile/1.4.2/jquery.mobile-1.4.2.min.js" type="text/javascript"></script>
+<script type="text/javascript" charset="utf-8" src="cordova.js"></script>
+<script src="js/main.js"></script>
+</head>
 
-    <body>
-        
-	<div id="header" class="header">
-		<h1>Employee Directory</h1>
+<body onload="init();">
+
+
+<div data-role="page" id="homePage">
+
+	<div data-role="header">
+		<h1>SimpleNotes</h1>
 	</div>
-	<div id="header2">
-		<h2>Employee List</h2>
-	</div>
-	
-	<div id="wrapper">
-		<ul id="employeeList" class="icon-list"></ul>
+
+	<div data-role="content" id="mainContent">	
+		<ul data-role="listview" id="noteTitleList"></ul>
 	</div>
 
-	<div id="busy"/>Loading...</div>
+	<div data-role="footer" class="ui-bar">
+		<a href="edit.html" data-role="button" data-icon="plus">Add Note</a>
+	</div>
 
-	<script src="js/phonegap.js"></script>
-    <script src="js/jquery.js"></script>
-    <script src="js/iscroll.js"></script>
-    <script src="js/employeelist.js"></script>
+</div>
 
-    </body>
-
+</body>
 </html>

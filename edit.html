@@ -1,0 +1,29 @@
+
+<div data-role="page" id="editPage">
+
+	<div data-role="header">
+		<h1>Write Note</h1>
+	</div>
+
+	<div data-role="content">	
+		<form id="editNoteForm" method="post">
+			<input type="hidden" name="noteId" id="noteId" value="">
+			<div data-role="fieldcontain">
+				<label for="noteTitle">Title</label>
+				<input type="text" name="noteTitle" id="noteTitle">
+			</div>
+			<div data-role="fieldcontain">
+				<label for="noteBody">Note</label>
+				<textarea name="noteBody" id="noteBody"></textarea>
+			</div>
+			<div data-role="fieldcontain">
+				<input type="submit" id="editFormSubmitButton" value="Save Note">
+			</div>
+		</form>
+	</div>
+
+	<div data-role="footer" class="ui-bar">
+		<a href="index.html" data-role="button" data-icon="home">Return Home</a>
+	</div>
+
+</div>
