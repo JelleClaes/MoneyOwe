@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- config.xml reference: https://build.phonegap.com/docs/config-xml -->
+<widget xmlns     = "http://www.w3.org/ns/widgets"
+        xmlns:gap = "http://phonegap.com/ns/1.0"
+        id        = "be.iprog.MoneyOwe"
+        version   = "1.0">
+
+    <name>MoneyOwe</name>
+
+    <description>
+     
+    </description>
+
+    <author href="http://iprog.be" email="info@iprog.be">
+        Jelle Claes
+    </author>
+
+    <preference name="phonegap-version" value="3.3.0" /> 
+
+    <gap:plugin name="org.apache.cordova.core.device" />
+    <gap:plugin name="org.apache.cordova.dialogs" />	
+    <gap:plugin name="org.apache.cordova.storage" />
+</widget>

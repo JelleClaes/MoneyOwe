@@ -6,11 +6,109 @@
 <link href="http://code.jquery.com/mobile/1.4.2/jquery.mobile-1.4.2.min.css" rel="stylesheet" type="text/css"/>
 <script src="http://code.jquery.com/jquery-1.11.0.min.js" type="text/javascript"></script>
 <script src="http://code.jquery.com/mobile/1.4.2/jquery.mobile-1.4.2.min.js" type="text/javascript"></script>
-<script type="text/javascript" charset="utf-8" src="cordova.js"></script>
-<script src="js/main.js"></script>
+
 </head>
 
-<body onload="init();">
+ <script type="text/javascript" charset="utf-8">
+	function saveNote() {	    
+            var db = window.openDatabase("Database", "1.0", "MoneyOwe", 200000);
+	    if($("#noteName").val() == "") $("#noteName").val() = "[Geen Naam]";
+	    var i;
+	    if($("#noteStatus").slider().val() == "off") {i=0;} else {i=1;}	
+	    db.transaction(function(tx) {				
+	        if($("#noteId").val() == "") tx.executeSql("INSERT INTO CONTACTS (name,amount,status,active) VALUES(?,?,?,?)",[$("#noteName").val(),$("#noteAmount").val(),i, new Date()]);
+	        else tx.executeSql("UPDATE CONTACTS set name=?, amount=?,status=?, active=? where id=?",[$("#noteName").val(),$("#noteAmount").val(),i, new Date(), $("#noteId").val()]);
+	    }, errorCB,window.history.go(-1));
+	}
+
+    function populateDB(tx) {
+        tx.executeSql('DROP TABLE IF EXISTS CONTACTS');
+        tx.executeSql('CREATE TABLE IF NOT EXISTS CONTACTS (id INTEGER PRIMARY KEY, name,amount,status,active)');
+      	tx.executeSql('INSERT INTO CONTACTS (name,amount,status,active) VALUES ("Jelle","20",0,new Date())');
+        tx.executeSql('INSERT INTO CONTACTS (name,amount,status,active) VALUES ("Dorien","20",1,new Date())');
+    }
+
+     function queryDB(tx) {
+        tx.executeSql('SELECT * FROM CONTACTS', [], querySuccess, errorCB);
+    }
+
+    function querySuccess(tx, results) {
+//Test  
+//      var len = results.rows.length;
+//        console.log("Contacts table: " + len + " rows found.");
+//        for (var i=0; i<len; i++){
+//            console.log("Row = " + i + " ID = " + results.rows.item(i).id + " Name =  " + results.rows.item(i).name + " Status =  " + results.rows.item(i).status);
+//        }
+//
+ 	if (results.rows.length == 0) {
+        	$("#mainContent").html("Geen bedragen..");
+	    } else {
+	       var s = "";
+	       for(var i=0; i<results.rows.length; i++) {
+         	s += "<li><a href='#editPage' id='"+results.rows.item(i).id + "' onClick='reply_click(this.id)'>" + results.rows.item(i).name + "</a></li>";  
+	       }
+	       $("#NoteNameList").html(s);
+	       $("#NoteNameList").listview("refresh");
+	    }
+    }
+
+    function errorCB(err) {
+        console.log("Error processing SQL: "+err.code);
+    }
+
+
+    function successCB() {
+        var db = window.openDatabase("Database", "1.0", "MoneyOwe", 200000);
+        db.transaction(queryDB, errorCB);
+    }
+
+    function onDeviceReady() {
+        var db = window.openDatabase("Database", "1.0", "MoneyOwe", 200000);
+        db.transaction(populateDB, errorCB, successCB);
+    }
+
+    document.addEventListener("deviceready", onDeviceReady(), false);
+
+      $(document).on("pageshow", "#homePage", function () {
+		successCB();
+      });  
+	
+	var val;
+	function reply_click(clicked_id)
+	{
+    	 val = clicked_id;
+	}
+	function setVal()
+	{
+    	 val = '';
+	 $("#noteId").val('');
+         $("#noteName").val('');
+         $("#noteAmount").val('');	
+	 $("#noteStatus").val('off').slider("refresh");      
+	}
+
+      $(document).on("pagebeforeshow", "#editPage", function () {
+		
+	if(val.length > 0) {         
+           $("#editFormSubmitButton").attr("disabled","disabled"); 
+	    var db = window.openDatabase("Database", "1.0", "MoneyOwe", 200000);
+            db.transaction(
+                function(tx) {
+                    tx.executeSql("select id,name,amount,status from CONTACTS where id=?",[val],function(tx,results) {
+                        $("#noteId").val(results.rows.item(0).id);
+                        $("#noteName").val(results.rows.item(0).name);
+                        $("#noteAmount").val(results.rows.item(0).amount);
+			if(results.rows.item(0).status == 0) {$("#noteStatus").val('off').slider("refresh");} else {$("#noteStatus").val('on').slider("refresh");}
+			//$("#noteStatus").val(results.rows.item(0).status);
+                        $("#editFormSubmitButton").removeAttr("disabled");   
+                    });
+                }, errorCB);            
+        } else {
+         $("#editFormSubmitButton").removeAttr("disabled");   
+        }	
+      }); 
+
+    </script>
 
 
 <div data-role="page" id="homePage">
@@ -20,14 +118,46 @@
 	</div>
 
 	<div data-role="content" id="mainContent">	
-		<ul data-role="listview" id="noteTitleList"></ul>
+		<ul data-role="listview" id="NoteNameList"></ul>
+	</div>
+	<div data-role="footer" class="ui-bar">
+		<a href="#editPage" data-role="button" data-icon="plus" data-iconpos="notext" onClick="setVal()"></a>
+	</div>
+</div>
+
+
+<div data-role="page" id="editPage">
+
+	<div data-role="header">
+		<h1>Schuld toevoegen</h1>
+	</div>
+
+	<div data-role="content">
+			<input type="hidden" name="noteId" id="noteId" value="">
+			<div data-role="fieldcontain">
+				<label for="noteName">Naam</label>
+				<input type="text" name="noteName" id="noteName">
+			</div>
+			<div data-role="fieldcontain">
+				<label for="noteAmount">Amount</label>
+				<input type="text" name="noteAmount" id="noteAmount">
+			</div>
+			<div data-role="fieldcontain">
+				<label for="noteStatus">Schuld</label>
+				<select name="noteStatus" id="noteStatus" data-role="slider">
+					<option value="off">Uitgave</option>
+					<option value="on">Inkomst</option>
+				</select> 	
+			</div>		
+			<div data-role="fieldcontain">
+				<input type="submit" id="editFormSubmitButton" value="Schuld opslaan" onclick="saveNote()"/>
+			</div>
 	</div>
 
 	<div data-role="footer" class="ui-bar">
-		<a href="edit.html" data-role="button" data-icon="plus">Add Note</a>
+		<a href="#homePage" data-role="button" data-icon="home">Return Home</a>
 	</div>
 
 </div>
-
 </body>
 </html>
