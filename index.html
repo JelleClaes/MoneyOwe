@@ -10,11 +10,11 @@
 </head>
 
  <script type="text/javascript" charset="utf-8">
-	function Save() {	              
-	    if($("#noteName").val() == "") $("#noteName").val() = "[Geen Naam]";
+	function Save() {         	    
 	    var i;
 	    $("input[name*=radio-choice-]:checked").each(function() {
-             if($(this).val() == "radio-choice-1") {i=0;} else {i=1;}
+             if(this.value == "choice-1") {i=0;} else {i=1;}
+		console.log(i);
 		AddItem($("#noteName").val(),$("#noteAmount").val(),i,$("#noteId").val());	  
     	    }); 	   
 	}
@@ -66,8 +66,7 @@
 	var val;
 	function reply_click(clicked_id)
 	{
-    	 val = clicked_id.substring(4);
-	console.log(val);
+    	 val = clicked_id.substring(4);	
 	}
 	function setVal()
 	{
@@ -78,18 +77,24 @@
 	}
 
       $(document).on("pagebeforeshow", "#editPage", function () {
-	$("input[id=radio-choice-1]").attr("checked",false).checkboxradio("refresh");
-	$("input[id=radio-choice-2]").attr("checked",false).checkboxradio("refresh");
 	if(val.length > 0) {         
 	        $("#editFormSubmitButton").attr("disabled","disabled"); 	   
 		$("#noteId").val(val);
                 $("#noteName").val(localStorage.getItem("name"+val));
-		console.log(localStorage.getItem("name"+val));
                 $("#noteAmount").val(localStorage.getItem("amount"+val));
-		if(localStorage.getItem("status"+val) == 0) {$("input[id=radio-choice-1]").attr("checked",true).checkboxradio("refresh");} else {$("input[id=radio-choice-2]").attr("checked",true).checkboxradio("refresh");}
+		console.log(localStorage.getItem("status"+val));
+		if(localStorage.getItem("status"+val) == 0) {
+		$("input[id=radio-choice-1]").attr("checked",true).checkboxradio("refresh");
+		$("input[id=radio-choice-2]").attr("checked",false).checkboxradio("refresh");
+		} else {
+		$("input[id=radio-choice-2]").attr("checked",true).checkboxradio("refresh");
+		$("input[id=radio-choice-1]").attr("checked",false).checkboxradio("refresh");
+		}
                 $("#editFormSubmitButton").removeAttr("disabled");                               
         } else {
-         $("#editFormSubmitButton").removeAttr("disabled");   
+         $("#editFormSubmitButton").removeAttr("disabled"); 
+	$("input[id=radio-choice-1]").attr("checked",false).checkboxradio("refresh");
+	$("input[id=radio-choice-2]").attr("checked",false).checkboxradio("refresh");  
         }
 	
       }); 
@@ -129,25 +134,25 @@
 			<input type="hidden" name="noteId" id="noteId" value="">
 			<div data-role="fieldcontain">
 				<label for="noteName">Naam</label>
-				<input type="text" name="noteName" id="noteName">
+				<input type="text" name="noteName" id="noteName" style="background-color:grey;">
 			</div>
 
 			<div data-role="fieldcontain">
 				<label for="noteAmount">Bedrag</label>
-				<input type="number" name="noteAmount" id="noteAmount">
+				<input type="number" name="noteAmount" id="noteAmount" style="background-color:grey;">
 			</div>
 			<div data-role="fieldcontain">
 				<fieldset data-role="controlgroup" data-type="horizontal" data-role="fieldcontain" style="text-align: center;">
-					<input type="radio" name="radio-choice-1" id="radio-choice-1" value="choice-1"/>
+					<input type="radio" name="radio-choice-1" id="radio-choice-1" value="choice-1" style="background-color:grey;"/>
          				<label for="radio-choice-1">Uitgeleend</label>
-			         	<input type="radio" name="radio-choice-1" id="radio-choice-2" value="choice-2"  />
+			         	<input type="radio" name="radio-choice-1" id="radio-choice-2" value="choice-2"  style="background-color:grey;"/>
          				<label for="radio-choice-2">Geleend</label>
 
 				</fieldset>
 			</div>				
 					
 			<div data-role="fieldcontain">
-				<input type="submit" id="editFormSubmitButton" value="Bedrag opslaan" onclick="Save()"/>
+				<input type="submit" id="editFormSubmitButton" value="Bedrag opslaan" onclick="Save()" style="background-color:grey;"/>
 			</div>
 	</div>
 
