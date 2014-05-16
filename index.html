@@ -14,7 +14,9 @@
             var db = window.openDatabase("Database", "1.0", "MoneyOwe", 200000);
 	    if($("#noteName").val() == "") $("#noteName").val() = "[Geen Naam]";
 	    var i;
-	    if($("#noteStatus").slider().val() == "off") {i=0;} else {i=1;}	
+	    $("input[name*=radio-choice-]:checked").each(function() {
+             if($(this).val() == "radio-choice-1") {i=0;} else {i=1;}	  
+    	    }); 	   
 	    db.transaction(function(tx) {				
 	        if($("#noteId").val() == "") tx.executeSql("INSERT INTO CONTACTS (name,amount,status,active) VALUES(?,?,?,?)",[$("#noteName").val(),$("#noteAmount").val(),i, new Date()]);
 	        else tx.executeSql("UPDATE CONTACTS set name=?, amount=?,status=?, active=? where id=?",[$("#noteName").val(),$("#noteAmount").val(),i, new Date(), $("#noteId").val()]);
@@ -84,7 +86,7 @@
 	 $("#noteId").val('');
          $("#noteName").val('');
          $("#noteAmount").val('');	
-	 $("#noteStatus").val('off').slider("refresh");      
+	 $("input[id=radio-choice-1]").attr("checked",true).checkboxradio("refresh");      
 	}
 
       $(document).on("pagebeforeshow", "#editPage", function () {
@@ -98,8 +100,7 @@
                         $("#noteId").val(results.rows.item(0).id);
                         $("#noteName").val(results.rows.item(0).name);
                         $("#noteAmount").val(results.rows.item(0).amount);
-			if(results.rows.item(0).status == 0) {$("#noteStatus").val('off').slider("refresh");} else {$("#noteStatus").val('on').slider("refresh");}
-			//$("#noteStatus").val(results.rows.item(0).status);
+			if(results.rows.item(0).status == 0) {$("input[id=radio-choice-1]").attr("checked",true).checkboxradio("refresh");} else {$("input[id=radio-choice-2]").attr("checked",true).checkboxradio("refresh");}
                         $("#editFormSubmitButton").removeAttr("disabled");   
                     });
                 }, errorCB);            
@@ -111,7 +112,7 @@
     </script>
 
 
-<div data-role="page" id="homePage">
+<div data-role="page" id="homePage" data-theme="b">
 
 	<div data-role="header">
 		<h1>Overzicht</h1>
@@ -126,7 +127,7 @@
 </div>
 
 
-<div data-role="page" id="editPage">
+<div data-role="page" id="editPage" data-theme="b">
 
 	<div data-role="header">
 		<h1>Schuld toevoegen</h1>
@@ -138,17 +139,23 @@
 				<label for="noteName">Naam</label>
 				<input type="text" name="noteName" id="noteName">
 			</div>
+
 			<div data-role="fieldcontain">
-				<label for="noteAmount">Amount</label>
-				<input type="text" name="noteAmount" id="noteAmount">
+				<label for="noteAmount">Bedrag</label>
+				<input type="number" name="noteAmount" id="noteAmount">
 			</div>
 			<div data-role="fieldcontain">
-				<label for="noteStatus">Schuld</label>
-				<select name="noteStatus" id="noteStatus" data-role="slider">
-					<option value="off">Uitgave</option>
-					<option value="on">Inkomst</option>
-				</select> 	
-			</div>		
+				<fieldset data-role="controlgroup" data-type="horizontal" data-role="fieldcontain" style="text-align: center;">
+					<input type="radio" name="radio-choice-1" id="radio-choice-1" value="choice-1" checked="checked" />
+         				<label for="radio-choice-1">Uitgeleend</label>
+			         	<input type="radio" name="radio-choice-1" id="radio-choice-2" value="choice-2"  />
+         				<label for="radio-choice-2">Geleend</label>
+
+				</fieldset>
+			</div>
+			
+					
+					
 			<div data-role="fieldcontain">
 				<input type="submit" id="editFormSubmitButton" value="Schuld opslaan" onclick="saveNote()"/>
 			</div>

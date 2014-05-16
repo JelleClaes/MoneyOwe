@@ -16,8 +16,9 @@
         Jelle Claes
     </author>
 
-    <preference name="phonegap-version" value="3.3.0" /> 
+    <preference name="phonegap-version" value="3.4.0" /> 
 
     <gap:plugin name="org.apache.cordova.core.device" />
-    <gap:plugin name="org.apache.cordova.dialogs" />	
+    <gap:plugin name="org.apache.cordova.dialogs" />
+    <gap:plugin name="org.apache.cordova.storage" />	
 </widget>
